@@ -1,0 +1,6 @@
+{
+  "name": "KR PDF - Free Online PDF Tools",
+  "description": "Free, fast and secure online PDF tools. Convert PDF to Word, Image to PDF, and edit, annotate, merge or split PDF files without registration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

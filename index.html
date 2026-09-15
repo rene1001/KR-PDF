@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      /**
+       * Safeguard window.fetch against read-only getter restrictions
+       * Prevents "Uncaught TypeError: Cannot set property fetch of #<Window> which has only a getter"
+       */
+      (function () {
+        try {
+          var nativeFetch = typeof window !== 'undefined' && window.fetch ? window.fetch.bind(window) : undefined;
+          var _currentFetch = nativeFetch;
+
+          function installFetchAccessor(target) {
+            if (!target) return false;
+            try {
+              var descriptor = Object.getOwnPropertyDescriptor(target, 'fetch');
+              // If property exists with a getter and no setter, provide a setter
+              if (descriptor && descriptor.get && !descriptor.set) {
+                Object.defineProperty(target, 'fetch', {
+                  get: function () {
+                    return _currentFetch;
+                  },
+                  set: function (newFetch) {
+                    _currentFetch = newFetch;
+                  },
+                  configurable: true,
+                  enumerable: true,
+                });
+                return true;
+              }
+            } catch (err) {
+              // Ignore restriction
+            }
+            return false;
+          }
+
+          if (!installFetchAccessor(window)) {
+            var proto = typeof window !== 'undefined' ? Object.getPrototypeOf(window) : null;
+            while (proto && proto !== Object.prototype) {
+              if (installFetchAccessor(proto)) break;
+              proto = Object.getPrototypeOf(proto);
+            }
+          }
+
+          // In case another script executes in strict mode before redefinition
+          window.addEventListener('error', function (event) {
+            if (
+              event &&
+              event.message &&
+              event.message.indexOf('fetch') !== -1 &&
+              event.message.indexOf('only a getter') !== -1
+            ) {
+              if (event.preventDefault) event.preventDefault();
+              if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+              return true;
+            }
+          });
+        } catch (e) {
+          // Ignore
+        }
+      })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KR PDF — Free Online PDF Tools</title>
+    <meta name="description" content="Free, fast and secure online PDF tools. Convert PDF to Word, Image to PDF, and edit, annotate, merge or split PDF files without registration." />
+    <meta name="keywords" content="pdf to word, image to pdf, jpg to pdf, pdf editor, edit pdf online, free pdf tools, convert pdf to docx, merge pdf, split pdf" />
+    <meta name="author" content="KR PDF" />
+    <meta name="theme-color" content="#10b981" />
+    
+    <!-- OpenGraph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="KR PDF — Free Online PDF Tools" />
+    <meta property="og:description" content="Free, fast and secure online PDF tools. Convert PDF to Word, Image to PDF, and edit, annotate, merge or split PDF files without registration." />
+    <meta property="og:site_name" content="KR PDF" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="KR PDF — Free Online PDF Tools" />
+    <meta name="twitter:description" content="Free, fast and secure online PDF tools. Convert PDF to Word, Image to PDF, and edit, annotate, merge or split PDF files without registration." />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%2310B981'/><text x='16' y='22' font-family='Arial, sans-serif' font-size='15' font-weight='900' fill='white' text-anchor='middle'>KR</text></svg>" />
+
+    <!-- Schema.org WebApplication -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "KR PDF",
+      "applicationCategory": "ProductivityApplication",
+      "operatingSystem": "All",
+      "description": "Free, fast and secure online PDF tools to convert PDF to Word, Image to PDF, and edit PDF documents without registration.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+  </head>
+  <body class="bg-slate-50 text-slate-900 antialiased selection:bg-emerald-500 selection:text-white">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
